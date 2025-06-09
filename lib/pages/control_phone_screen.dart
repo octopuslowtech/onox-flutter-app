@@ -51,7 +51,7 @@ class _ControlPhoneScreenState extends State<ControlPhoneScreen> {
   }
 
   Future<void> _initWebView() async {
-    final token = await _authService.getToken();
+    String? token = await _authService.getToken();
     if (token == null) {
       setState(() {
         _errorMessage = 'Không có token xác thực';
@@ -59,13 +59,16 @@ class _ControlPhoneScreenState extends State<ControlPhoneScreen> {
       });
       return;
     }
-
+     token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImQ0YzA4MmMxLTY4MDYtNDM1MS02NDc4LTA4ZGFmNjllOTIyOSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6Im9jdG9wdXNsb3d0ZWNoQGdtYWlsLmNvbSIsIlBlcm1pc3Npb24iOlsiUGVybWlzc2lvbnMuQWRtaW4iLCJQZXJtaXNzaW9ucy5NYW5hZ2VyIiwiUGVybWlzc2lvbnMuRGV2ZWxvcGVyIiwiUGVybWlzc2lvbnMuQW5kcm9pZCIsIlBlcm1pc3Npb25zLk1lbWJlci5DaGFuZ2VCYWNrZ3JvdW5kIiwiUGVybWlzc2lvbnMuTWVtYmVyLkRlYnVnIiwiUGVybWlzc2lvbnMuRmFjZWJvb2suVmlldyIsIlBlcm1pc3Npb25zLkZhY2Vib29rLkVkaXQiLCJQZXJtaXNzaW9ucy5GYWNlYm9vay5TY3JpcHQiLCJQZXJtaXNzaW9ucy5UaWt0b2suVmlldyIsIlBlcm1pc3Npb25zLlRpa3Rvay5FZGl0IiwiUGVybWlzc2lvbnMuVGlrdG9rLlNjcmlwdCIsIlBlcm1pc3Npb25zLlR3aXR0ZXIuVmlldyIsIlBlcm1pc3Npb25zLlR3aXR0ZXIuRWRpdCIsIlBlcm1pc3Npb25zLlR3aXR0ZXIuU2NyaXB0IiwiUGVybWlzc2lvbnMuSW5zdGFncmFtLlZpZXciLCJQZXJtaXNzaW9ucy5JbnN0YWdyYW0uRWRpdCIsIlBlcm1pc3Npb25zLkluc3RhZ3JhbS5TY3JpcHQiLCJQZXJtaXNzaW9ucy5UaHJlYWRzLlZpZXciLCJQZXJtaXNzaW9ucy5UaHJlYWRzLkVkaXQiLCJQZXJtaXNzaW9ucy5UaHJlYWRzLlNjcmlwdCIsIlBlcm1pc3Npb25zLk1lbWJlci5HYWxsZXJ5Il0sImV4cCI6MTc0OTQ1NzE4NX0.8QyL0nvW-x19iKMIk3tTd0IiXZw4up8ApQaLeuW_GSg';
     // Lưu token vào cookie để WebView có thể sử dụng
     await storage.write(key: 'access_token', value: token);
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
+      // Thêm cấu hình User-Agent để tránh bị chặn
+      ..setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36')
+      // Cho phép truy cập nội dung không an toàn
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
@@ -83,12 +86,20 @@ class _ControlPhoneScreenState extends State<ControlPhoneScreen> {
               _isLoading = false;
             });
           },
+          // Thêm xử lý cho các yêu cầu không an toàn
+          onNavigationRequest: (NavigationRequest request) {
+            return NavigationDecision.navigate;
+          },
         ),
       )
+      // Thêm cấu hình cho WebView
+      ..enableZoom(true)
       ..loadRequest(
-        Uri.parse('https://app.maxcloudphone.com/shared-view?deviceId=${widget.phone.id}&apiToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImQ0YzA4MmMxLTY4MDYtNDM1MS02NDc4LTA4ZGFmNjllOTIyOSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6Im9jdG9wdXNsb3d0ZWNoQGdtYWlsLmNvbSIsIlBlcm1pc3Npb24iOlsiUGVybWlzc2lvbnMuQWRtaW4iLCJQZXJtaXNzaW9ucy5NYW5hZ2VyIiwiUGVybWlzc2lvbnMuRGV2ZWxvcGVyIiwiUGVybWlzc2lvbnMuQW5kcm9pZCIsIlBlcm1pc3Npb25zLk1lbWJlci5DaGFuZ2VCYWNrZ3JvdW5kIiwiUGVybWlzc2lvbnMuTWVtYmVyLkRlYnVnIiwiUGVybWlzc2lvbnMuRmFjZWJvb2suVmlldyIsIlBlcm1pc3Npb25zLkZhY2Vib29rLkVkaXQiLCJQZXJtaXNzaW9ucy5GYWNlYm9vay5TY3JpcHQiLCJQZXJtaXNzaW9ucy5UaWt0b2suVmlldyIsIlBlcm1pc3Npb25zLlRpa3Rvay5FZGl0IiwiUGVybWlzc2lvbnMuVGlrdG9rLlNjcmlwdCIsIlBlcm1pc3Npb25zLlR3aXR0ZXIuVmlldyIsIlBlcm1pc3Npb25zLlR3aXR0ZXIuRWRpdCIsIlBlcm1pc3Npb25zLlR3aXR0ZXIuU2NyaXB0IiwiUGVybWlzc2lvbnMuSW5zdGFncmFtLlZpZXciLCJQZXJtaXNzaW9ucy5JbnN0YWdyYW0uRWRpdCIsIlBlcm1pc3Npb25zLkluc3RhZ3JhbS5TY3JpcHQiLCJQZXJtaXNzaW9ucy5UaHJlYWRzLlZpZXciLCJQZXJtaXNzaW9ucy5UaHJlYWRzLkVkaXQiLCJQZXJtaXNzaW9ucy5UaHJlYWRzLlNjcmlwdCIsIlBlcm1pc3Npb25zLk1lbWJlci5HYWxsZXJ5Il0sImV4cCI6MTc0OTQ1NzE4NX0.8QyL0nvW-x19iKMIk3tTd0IiXZw4up8ApQaLeuW_GSg'),
+        Uri.parse('https://app.maxcloudphone.com/shared-view?deviceId=${widget.phone.id}&apiToken=${token}'),
         headers: {
-          'Authorization': 'Bearer $token',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.9',
         },
       );
   }
@@ -117,40 +128,6 @@ class _ControlPhoneScreenState extends State<ControlPhoneScreen> {
       ),
       body: Column(
         children: [
-          ShadCard(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Tên: ${widget.phone.name}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'ID: ${widget.phone.id}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  if (_phoneDetails != null) ...[  
-                    const SizedBox(height: 8),
-                    Text(
-                      'Trạng thái: ${_phoneDetails!['status'] ?? 'Không có thông tin'}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Phiên bản Android: ${_phoneDetails!['androidVersion'] ?? 'Không có thông tin'}',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
           const SizedBox(height: 16),
           Expanded(
             child: _isLoading
