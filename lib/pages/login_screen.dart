@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import '../services/auth_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -156,14 +157,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         const Text('Chưa có token? '),
                         InkWell(
-                          onTap: () {
-                            // Mở trang web để lấy token
-                            // Trong ứng dụng thực tế, bạn có thể sử dụng url_launcher
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Truy cập https://app.maxcloudphone.com để lấy token'),
-                              ),
-                            );
+                          onTap: () async {
+                            // Mở trang web để lấy token bằng url_launcher
+                            final Uri url = Uri.parse('https://app.maxcloudphone.com');
+                            if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Không thể mở trang web'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
                           },
                           child: Text(
                             'Lấy token tại đây',
