@@ -4,6 +4,7 @@ import '../services/auth_service.dart';
 import '../services/cloud_phone_service.dart';
 import '../models/cloud_phone.dart';
 import 'control_phone_screen.dart';
+import 'package:flutter/cupertino.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -72,10 +73,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MaxCloudPhone Dashboard'),
+        title: const Text('MaxCloudPhone Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
+        elevation: 0,
         actions: [
-          ShadIconButton(
-            icon: const Icon(Icons.logout),
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.blue),
+            onPressed: () => _loadUserData(forceRefresh: true),
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.redAccent),
             onPressed: _logout,
           ),
         ],
@@ -104,19 +110,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ShadCard(
                         child: Padding(
                           padding: const EdgeInsets.all(16),
+                          
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Thông tin tài khoản',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Icon(Icons.account_circle, color: Colors.blue),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  const Text(
+                                    'Thông tin tài khoản',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 16),
-                              _buildInfoRow('Email', _userData?['email']?.toString() ?? 'N/A'),
-                              _buildInfoRow('Số dư', _formatCurrency(_userData?['balance'])),
+                              const SizedBox(height: 24),
+                              _buildInfoRow('Email', _userData?['email']?.toString() ?? 'N/A', Icons.email),
+                              _buildInfoRow('Số dư', _formatCurrency(_userData?['balance']), Icons.account_balance_wallet),
                             ],
                           ),
                         ),
@@ -131,15 +152,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
-                                    'Danh sách Cloud Phone',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green.withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Icon(Icons.smartphone, color: Colors.green),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      const Text(
+                                        'Danh sách Cloud Phone',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  ShadIconButton(
-                                    icon: const Icon(Icons.refresh),
+                                  IconButton(
+                                    icon: const Icon(Icons.refresh, color: Colors.green),
                                     onPressed: _loadCloudPhones,
                                   ),
                                 ],
@@ -160,29 +194,70 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           itemCount: _cloudPhones.length,
                                           itemBuilder: (context, index) {
                                             final phone = _cloudPhones[index];
-                                            return Card(
-                                              margin: const EdgeInsets.only(bottom: 8),
+                                            return Container(
+                                              margin: const EdgeInsets.only(bottom: 12),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(12),
+                                                border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [Colors.grey.withOpacity(0.05), Colors.black.withOpacity(0.1)],
+                                                ),
+                                              ),
                                               child: ListTile(
-                                                title: Text(phone.name),
+                                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                                leading: Container(
+                                                  padding: const EdgeInsets.all(8),
+                                                  decoration: BoxDecoration(
+                                                    color: phone.isOnline ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2),
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  child: Icon(
+                                                    CupertinoIcons.device_phone_portrait,
+                                                    color: phone.isOnline ? Colors.green : Colors.red,
+                                                  ),
+                                                ),
+                                                title: Text(
+                                                  phone.name,
+                                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                                ),
                                                 subtitle: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Text('Model: ${phone.model}'),
+                                                    const SizedBox(height: 4),
+                                                    Row(
+                                                      children: [
+                                                        const Icon(Icons.phone_android, size: 14, color: Colors.grey),
+                                                        const SizedBox(width: 4),
+                                                        Text('Model: ${phone.model}', style: TextStyle(color: Colors.grey[400])),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(height: 4),
                                                     Row(
                                                       children: [
                                                         Icon(
-                                                          phone.isOnline ? Icons.check_circle : Icons.cancel,
+                                                          phone.isOnline ? CupertinoIcons.wifi : CupertinoIcons.wifi_slash,
                                                           color: phone.isOnline ? Colors.green : Colors.red,
-                                                          size: 16,
+                                                          size: 14,
                                                         ),
                                                         const SizedBox(width: 4),
-                                                        Text(phone.isOnline ? 'Online' : 'Offline'),
+                                                        Text(
+                                                          phone.isOnline ? 'Online' : 'Offline',
+                                                          style: TextStyle(color: phone.isOnline ? Colors.green : Colors.red),
+                                                        ),
                                                       ],
                                                     ),
                                                   ],
                                                 ),
-                                                trailing: ShadButton(
-                                                  child: const Text('View'),
+                                                trailing: ElevatedButton.icon(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor: Colors.blueGrey.withOpacity(0.2),
+                                                    foregroundColor: Colors.white,
+                                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                  ),
+                                                  icon: const Icon(Icons.visibility, size: 16),
+                                                  label: const Text('Xem'),
                                                   onPressed: () {
                                                     Navigator.push(
                                                       context,
@@ -206,21 +281,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+  Widget _buildInfoRow(String label, String value, IconData icon) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey.withOpacity(0.1),
+      ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              label,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
             ),
+            child: Icon(icon, color: Colors.blue, size: 20),
           ),
-          Expanded(
-            child: Text(value),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(fontWeight: FontWeight.w500, color: Colors.grey[400], fontSize: 12),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+            ],
           ),
         ],
       ),
