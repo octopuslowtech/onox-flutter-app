@@ -221,21 +221,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                 subtitle: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    const SizedBox(height: 4),
-                                                    Row(
-                                                      children: [
-                                                        const Icon(Icons.phone_android, size: 14, color: Colors.grey),
-                                                        const SizedBox(width: 4),
-                                                        Text('Model: ${phone.model}', style: TextStyle(color: Colors.grey[400])),
-                                                      ],
+                                                    Text(
+                                                      phone.model,
+                                                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
                                                     ),
                                                     const SizedBox(height: 4),
                                                     Row(
                                                       children: [
-                                                        Icon(
-                                                          phone.isOnline ? CupertinoIcons.wifi : CupertinoIcons.wifi_slash,
-                                                          color: phone.isOnline ? Colors.green : Colors.red,
-                                                          size: 14,
+                                                        Container(
+                                                          width: 8,
+                                                          height: 8,
+                                                          decoration: BoxDecoration(
+                                                            color: phone.isOnline ? Colors.green : Colors.red,
+                                                            shape: BoxShape.circle,
+                                                          ),
                                                         ),
                                                         const SizedBox(width: 4),
                                                         Text(
@@ -244,9 +243,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                         ),
                                                       ],
                                                     ),
+                                                    const SizedBox(height: 4),
+                                                    Row(
+                                                      children: [
+                                                        const Icon(Icons.timer_outlined, size: 12, color: Colors.orange),
+                                                        const SizedBox(width: 4),
+                                                        Text(
+                                                          'Còn lại: ${_getRemainingTime(phone.expiredDate)}',
+                                                          style: const TextStyle(color: Colors.orange),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ],
                                                 ),
-                                                trailing: ElevatedButton.icon(
+                                                trailing: phone.isOnline ? ElevatedButton.icon(
                                                   style: ElevatedButton.styleFrom(
                                                     backgroundColor: Colors.blueGrey.withOpacity(0.2),
                                                     foregroundColor: Colors.white,
@@ -262,7 +272,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                       ),
                                                     );
                                                   },
-                                                ),
+                                                ) : null,
                                               ),
                                             );
                                           },
@@ -336,6 +346,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}';
     } catch (e) {
       return dateStr.toString();
+    }
+  }
+  
+  String _getRemainingTime(DateTime expiredDate) {
+    final now = DateTime.now();
+    if (expiredDate.isBefore(now)) {
+      return 'Đã hết hạn';
+    }
+    
+    final difference = expiredDate.difference(now);
+    
+    if (difference.inDays > 0) {
+      return '${difference.inDays} ngày';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} giờ';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} phút';
+    } else {
+      return '${difference.inSeconds} giây';
     }
   }
 }
