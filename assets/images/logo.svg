@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <rect width="200" height="200" rx="20" fill="#0066cc" />
+  <text x="100" y="90" font-family="Arial" font-size="24" text-anchor="middle" fill="white">Max</text>
+  <text x="100" y="120" font-family="Arial" font-size="24" text-anchor="middle" fill="white">Cloud</text>
+  <text x="100" y="150" font-family="Arial" font-size="24" text-anchor="middle" fill="white">Phone</text>
+  <path d="M60,40 L140,40 L140,160 L60,160 Z" stroke="white" stroke-width="4" fill="none" />
+  <path d="M90,170 L110,170" stroke="white" stroke-width="4" fill="none" />
+</svg>
