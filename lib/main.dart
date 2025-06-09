@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'pages/login_screen.dart';
 import 'pages/dashboard_screen.dart';
-import 'pages/control_phone_screen.dart';
 import 'services/auth_service.dart';
 
 void main() {

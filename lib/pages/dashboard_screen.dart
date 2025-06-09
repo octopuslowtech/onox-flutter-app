@@ -167,7 +167,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                 subtitle: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Text('ID: ${phone.id}'),
                                                     Text('Model: ${phone.model}'),
                                                     Row(
                                                       children: [
