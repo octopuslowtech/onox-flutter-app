@@ -48,7 +48,12 @@ class _ControlPhoneScreenState extends State<ControlPhoneScreen> {
   }
 
   Future<void> _initWebView() async {
-    String? token = await _authService.getToken();
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+    
+    final token = await _authService.getToken();
     if (token == null) {
       setState(() {
         _errorMessage = 'Không có token xác thực';
@@ -56,6 +61,29 @@ class _ControlPhoneScreenState extends State<ControlPhoneScreen> {
       });
       return;
     }
+    
+    // Lấy bearer token từ API
+    final cloudPhoneService = CloudPhoneService();
+    final connectionResult = await cloudPhoneService.getConnectionInfo(widget.phone.id);
+    
+    if (!connectionResult['success']) {
+      setState(() {
+        _errorMessage = connectionResult['message'] ?? 'Không thể lấy thông tin kết nối';
+        _isLoading = false;
+      });
+      return;
+    }
+    
+    final bearerToken = connectionResult['bearerToken'];
+    
+    if (bearerToken == null) {
+      setState(() {
+        _errorMessage = 'Không nhận được bearer token';
+        _isLoading = false;
+      });
+      return;
+    }
+
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
@@ -82,7 +110,7 @@ class _ControlPhoneScreenState extends State<ControlPhoneScreen> {
       ) 
       ..enableZoom(true)
       ..loadRequest(
-        Uri.parse('https://app.maxcloudphone.com/shared-view?deviceId=${widget.phone.id}&apiToken=${token}'),
+        Uri.parse('https://app.maxcloudphone.com/shared-view?deviceId=${widget.phone.id}&apiToken=$bearerToken'),
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',

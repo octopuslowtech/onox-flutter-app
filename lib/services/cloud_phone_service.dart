@@ -91,4 +91,45 @@ class CloudPhoneService {
       };
     }
   }
+
+  Future<Map<String, dynamic>> getConnectionInfo(String phoneId) async {
+    try {
+      final token = await _authService.getToken();
+      
+      if (token == null) {
+        return {
+          'success': false,
+          'message': 'Không có token xác thực',
+        };
+      }
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/CloudPhone/get-connection-info?id=$phoneId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'api_key': token,
+        },
+      );
+
+      final responseData = json.decode(response.body);
+      
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'data': responseData['data'],
+          'bearerToken': responseData['data']['token'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': responseData['message'] ?? 'Lỗi khi lấy thông tin kết nối',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Lỗi: ${e.toString()}',
+      };
+    }
+  }
 }

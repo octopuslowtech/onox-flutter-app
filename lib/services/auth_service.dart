@@ -62,7 +62,7 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> getUserInfo([String? token, bool forceRefresh = false]) async {
+  Future<Map<String, dynamic>> getUserInfo([String? token]) async {
     final storedToken = token ?? await storage.read(key: 'api_token');
     
     if (storedToken == null) {
@@ -72,17 +72,7 @@ class AuthService {
       };
     }
     
-    // Nếu không yêu cầu làm mới và có dữ liệu trong cache, trả về dữ liệu từ cache
-    if (!forceRefresh) {
-      final cachedData = await getCachedUserInfo();
-      if (cachedData != null) {
-        return {
-          'success': true,
-          'data': cachedData,
-          'fromCache': true,
-        };
-      }
-    }
+    // Luôn lấy dữ liệu mới của user
     
     final url = Uri.parse('$baseUrl/public/v1/CloudPhone/get-info');
     

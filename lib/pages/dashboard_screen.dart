@@ -28,12 +28,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _loadCloudPhones();
   }
 
-  Future<void> _loadUserData({bool forceRefresh = false}) async {
+  Future<void> _loadUserData() async {
     setState(() {
       _isLoading = true;
     });
 
-    final result = await _authService.getUserInfo(null, forceRefresh);
+    final result = await _authService.getUserInfo(null);
     
     if (mounted) {
       setState(() {
