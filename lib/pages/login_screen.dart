@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import '../services/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,9 +16,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final _tokenController = TextEditingController();
   bool _isLoading = false;
   final _authService = AuthService();
+  
+  MobileScannerController? scannerController;
 
   @override
   void dispose() {
+    scannerController?.dispose();
     _tokenController.dispose();
     super.dispose();
   }
@@ -143,10 +147,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         ? const Center(
                             child: CircularProgressIndicator(),
                           )
-                        : ShadButton(
-                            onPressed: _login,
-                            size: ShadButtonSize.lg,
-                            child: const Text('Đăng nhập'),
+                        : Row(
+                            children: [
+                              Expanded(
+                                child: ShadButton(
+                                  onPressed: _login,
+                                  size: ShadButtonSize.lg,
+                                  child: const Text('Đăng nhập'),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon: const Icon(Icons.qr_code_scanner),
+                                onPressed: () {
+                                  _showQRScanner();
+                                },
+                              ),
+                            ],
                           ),
                     
                     const SizedBox(height: 16),
@@ -186,6 +203,82 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+  
+  void _showQRScanner() {
+    scannerController = MobileScannerController();
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.85,
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Quét mã QR',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      scannerController?.dispose();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: MobileScanner(
+                controller: scannerController,
+                onDetect: (capture) {
+                  final List<Barcode> barcodes = capture.barcodes;
+                  if (barcodes.isNotEmpty && barcodes.first.rawValue != null) {
+                    final String token = barcodes.first.rawValue!;
+                    _tokenController.text = token;
+                    scannerController?.dispose();
+                    Navigator.of(context).pop();
+                    _login();
+                  }
+                },
+                // Tùy chỉnh overlay
+                overlay: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 3,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Quét mã QR để lấy token và đăng nhập tự động',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
         ),
       ),
     );
