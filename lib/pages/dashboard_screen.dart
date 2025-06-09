@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import '../services/auth_service.dart';
 import '../services/cloud_phone_service.dart';
 import '../models/cloud_phone.dart';
 import 'control_phone_screen.dart';
+import 'store_screen.dart';
 import 'package:flutter/cupertino.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  final bool showAppBar;
+  
+  const DashboardScreen({super.key, this.showAppBar = true});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -63,25 +67,59 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _logout() async {
-    await _authService.logout();
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
+    showShadDialog(
+      context: context,
+      builder: (context) => ShadDialog(
+        title: const Text('Xác nhận đăng xuất'),
+        description: const Text(
+          'Bạn có chắc chắn muốn đăng xuất khỏi ứng dụng không?',
+        ),
+        actions: [
+          ShadButton.outline(
+            child: const Text('Hủy'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          ShadButton(
+            child: const Text('Đăng xuất'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await _authService.logout();
+              if (mounted) {
+                Navigator.of(context).pushReplacementNamed('/login');
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: widget.showAppBar ? AppBar(
         title: const Text('Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
         elevation: 0,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.store, color: Colors.blue),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const StoreScreen(),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.redAccent),
             onPressed: _logout,
           ),
         ],
-      ),
+      ) : null,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _userData == null
@@ -111,22 +149,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: const Icon(Icons.account_circle, color: Colors.blue),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  const Text(
-                                    'Thông tin tài khoản',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue.withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Icon(Icons.account_circle, color: Colors.blue),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      const Text(
+                                        'Thông tin tài khoản',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -194,11 +237,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               margin: const EdgeInsets.only(bottom: 12),
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(12),
-                                                border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                                                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
                                                 gradient: LinearGradient(
                                                   begin: Alignment.topLeft,
                                                   end: Alignment.bottomRight,
-                                                  colors: [Colors.grey.withOpacity(0.05), Colors.black.withOpacity(0.1)],
+                                                  colors: [Colors.grey.withValues(alpha: 0.05), Colors.black.withValues(alpha: 0.1)],
                                                 ),
                                               ),
                                               child: ListTile(
@@ -206,7 +249,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                 leading: Container(
                                                   padding: const EdgeInsets.all(8),
                                                   decoration: BoxDecoration(
-                                                    color: phone.isOnline ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2),
+                                                    color: phone.isOnline ? Colors.green.withValues(alpha: 0.2) : Colors.red.withValues(alpha: 0.2),
                                                     borderRadius: BorderRadius.circular(8),
                                                   ),
                                                   child: Icon(
@@ -258,7 +301,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                 ),
                                                 trailing: phone.isOnline ? ElevatedButton.icon(
                                                   style: ElevatedButton.styleFrom(
-                                                    backgroundColor: Colors.blueGrey.withOpacity(0.2),
+                                                    backgroundColor: Colors.blueGrey.withValues(alpha: 0.2),
                                                     foregroundColor: Colors.white,
                                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                                   ),
@@ -293,7 +336,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.grey.withOpacity(0.1),
+        color: Colors.grey.withValues(alpha: 0.1),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -301,7 +344,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.1),
+              color: Colors.blue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: Colors.blue, size: 20),

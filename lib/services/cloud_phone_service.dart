@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/cloud_phone.dart';
+import '../models/store_cloud_phone.dart';
 import 'auth_service.dart';
 
 class CloudPhoneService {
@@ -123,6 +124,95 @@ class CloudPhoneService {
         return {
           'success': false,
           'message': responseData['message'] ?? 'Lỗi khi lấy thông tin kết nối',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Lỗi: ${e.toString()}',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> getStoreCloudPhones() async {
+    try {
+      final token = await _authService.getToken();
+      
+      if (token == null) {
+        return {
+          'success': false,
+          'message': 'Không có token xác thực',
+        };
+      }
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/CloudPhone/get-cloud-phone'),
+        headers: {
+          'Content-Type': 'application/json',
+          'api_key': token,
+        },
+      );
+
+      final responseData = json.decode(response.body);
+      
+      if (response.statusCode == 200) {
+        final List<StoreCloudPhone> phones = (responseData['data'] as List)
+            .map((item) => StoreCloudPhone.fromJson(item))
+            .toList();
+            
+        return {
+          'success': true,
+          'data': phones,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': responseData['message'] ?? 'Lỗi khi lấy danh sách cloud phone từ store',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Lỗi: ${e.toString()}',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> buyCloudPhone(String productId, int amount, int amountHour) async {
+    try {
+      final token = await _authService.getToken();
+      
+      if (token == null) {
+        return {
+          'success': false,
+          'message': 'Không có token xác thực',
+        };
+      }
+
+      final response = await http.post(
+        Uri.parse('$baseUrl/CloudPhone/buy-cloud-phone'),
+        headers: {
+          'Content-Type': 'application/json',
+          'api_key': token,
+        },
+        body: json.encode({
+          'productId': productId,
+          'amount': amount,
+          'amountHour': amountHour
+        }),
+      );
+
+      final responseData = json.decode(response.body);
+      
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'data': responseData['data'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': responseData['message'] ?? 'Lỗi khi mua cloud phone',
         };
       }
     } catch (e) {

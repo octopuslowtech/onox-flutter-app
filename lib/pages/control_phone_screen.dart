@@ -110,7 +110,7 @@ class _ControlPhoneScreenState extends State<ControlPhoneScreen> {
       ) 
       ..enableZoom(true)
       ..loadRequest(
-        Uri.parse('https://app.maxcloudphone.com/shared-view?deviceId=${widget.phone.id}&apiToken=$bearerToken'),
+        Uri.parse('https://app.maxcloudphone.com/shared-view?deviceId=${widget.phone.id}&apiToken=$bearerToken&isFrame=true'),
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
@@ -128,18 +128,6 @@ class _ControlPhoneScreenState extends State<ControlPhoneScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              setState(() {
-                _isLoading = true;
-                _errorMessage = '';
-              });
-              _initWebView();
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [

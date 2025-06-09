@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'pages/login_screen.dart';
-import 'pages/dashboard_screen.dart';
+import 'pages/home_screen.dart';
 import 'services/auth_service.dart';
 
 void main() {
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
           routes: {
             '/': (context) => const AuthWrapper(),
             '/login': (context) => const LoginScreen(),
-            '/dashboard': (context) => const DashboardScreen(),
+            '/home': (context) => const HomeScreen(),
           },
         );
       },
@@ -79,7 +79,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     }
 
     if (_isLoggedIn) {
-      return const DashboardScreen();
+      return const HomeScreen();
     } else {
       return const LoginScreen();
     }
