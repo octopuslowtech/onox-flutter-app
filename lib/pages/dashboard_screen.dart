@@ -99,13 +99,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 )
               : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ShadCard(
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(8),
                           
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,18 +130,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
-                              const SizedBox(height: 24),
+                              const SizedBox(height: 8),
+                              const SizedBox(height: 12),
                               _buildInfoRow('Email', _userData?['email']?.toString() ?? 'N/A', Icons.email),
                               _buildInfoRow('Số dư', _formatCurrency(_userData?['balance']), Icons.account_balance_wallet),
                             ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 8),
                       ShadCard(
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(8),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -289,8 +289,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildInfoRow(String label, String value, IconData icon) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         color: Colors.grey.withOpacity(0.1),

@@ -86,7 +86,7 @@ class _ControlPhoneScreenState extends State<ControlPhoneScreen> {
         ),
       )
       ..loadRequest(
-        Uri.parse('https://app.maxcloudphone.com/control-device?deviceId=${widget.phone.id}'),
+        Uri.parse('https://app.maxcloudphone.com/shared-view?deviceId=${widget.phone.id}&apiToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImQ0YzA4MmMxLTY4MDYtNDM1MS02NDc4LTA4ZGFmNjllOTIyOSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6Im9jdG9wdXNsb3d0ZWNoQGdtYWlsLmNvbSIsIlBlcm1pc3Npb24iOlsiUGVybWlzc2lvbnMuQWRtaW4iLCJQZXJtaXNzaW9ucy5NYW5hZ2VyIiwiUGVybWlzc2lvbnMuRGV2ZWxvcGVyIiwiUGVybWlzc2lvbnMuQW5kcm9pZCIsIlBlcm1pc3Npb25zLk1lbWJlci5DaGFuZ2VCYWNrZ3JvdW5kIiwiUGVybWlzc2lvbnMuTWVtYmVyLkRlYnVnIiwiUGVybWlzc2lvbnMuRmFjZWJvb2suVmlldyIsIlBlcm1pc3Npb25zLkZhY2Vib29rLkVkaXQiLCJQZXJtaXNzaW9ucy5GYWNlYm9vay5TY3JpcHQiLCJQZXJtaXNzaW9ucy5UaWt0b2suVmlldyIsIlBlcm1pc3Npb25zLlRpa3Rvay5FZGl0IiwiUGVybWlzc2lvbnMuVGlrdG9rLlNjcmlwdCIsIlBlcm1pc3Npb25zLlR3aXR0ZXIuVmlldyIsIlBlcm1pc3Npb25zLlR3aXR0ZXIuRWRpdCIsIlBlcm1pc3Npb25zLlR3aXR0ZXIuU2NyaXB0IiwiUGVybWlzc2lvbnMuSW5zdGFncmFtLlZpZXciLCJQZXJtaXNzaW9ucy5JbnN0YWdyYW0uRWRpdCIsIlBlcm1pc3Npb25zLkluc3RhZ3JhbS5TY3JpcHQiLCJQZXJtaXNzaW9ucy5UaHJlYWRzLlZpZXciLCJQZXJtaXNzaW9ucy5UaHJlYWRzLkVkaXQiLCJQZXJtaXNzaW9ucy5UaHJlYWRzLlNjcmlwdCIsIlBlcm1pc3Npb25zLk1lbWJlci5HYWxsZXJ5Il0sImV4cCI6MTc0OTQ1NzE4NX0.8QyL0nvW-x19iKMIk3tTd0IiXZw4up8ApQaLeuW_GSg'),
         headers: {
           'Authorization': 'Bearer $token',
         },
