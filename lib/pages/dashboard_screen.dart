@@ -73,13 +73,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MaxCloudPhone Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
         elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.blue),
-            onPressed: () => _loadUserData(forceRefresh: true),
-          ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.redAccent),
             onPressed: _logout,
@@ -164,7 +160,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       ),
                                       const SizedBox(width: 12),
                                       const Text(
-                                        'Danh sách Cloud Phone',
+                                        'Cloud Phone',
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
