@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:awesome_flutter_extensions/awesome_flutter_extensions.dart';
 import '../services/auth_service.dart';
 import '../services/cloud_phone_service.dart';
 import '../models/cloud_phone.dart';

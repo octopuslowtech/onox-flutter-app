@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
         // Chuyển đến màn hình dashboard
-        Navigator.of(context).pushReplacementNamed('/dashboard');
+        Navigator.of(context).pushReplacementNamed('/home');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
